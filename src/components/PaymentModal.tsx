@@ -10,6 +10,11 @@ export interface PaymentData {
   amount: number;
 }
 
+function toIntent(qrString: string, pkg: string): string {
+  const params = qrString.replace(/^upi:\/\/pay\?/, '');
+  return `intent://pay?${params}#Intent;scheme=upi;package=${pkg};end`;
+}
+
 const UPI_APPS = [
   {
     name: 'PhonePe',
@@ -19,7 +24,7 @@ const UPI_APPS = [
         <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="22" fill="white">P</text>
       </svg>
     ),
-    getUrl: (q: string) => q.replace('upi://', 'phonepe://'),
+    getUrl: (q: string) => toIntent(q, 'com.phonepe.app'),
   },
   {
     name: 'GPay',
@@ -29,7 +34,7 @@ const UPI_APPS = [
         <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="18" fill="#1a73e8" fontWeight="bold">G</text>
       </svg>
     ),
-    getUrl: (q: string) => q.replace('upi://', 'tez://upi/'),
+    getUrl: (q: string) => toIntent(q, 'com.google.android.apps.nbu.paisa.user'),
   },
   {
     name: 'Paytm',
@@ -39,7 +44,7 @@ const UPI_APPS = [
         <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="14" fill="white" fontWeight="bold">PTM</text>
       </svg>
     ),
-    getUrl: (q: string) => q.replace('upi://', 'paytmmp://'),
+    getUrl: (q: string) => toIntent(q, 'net.one97.paytm'),
   },
   {
     name: 'BHIM',
@@ -49,7 +54,7 @@ const UPI_APPS = [
         <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="13" fill="white" fontWeight="bold">BHIM</text>
       </svg>
     ),
-    getUrl: (q: string) => q.replace('upi://', 'bhim://'),
+    getUrl: (q: string) => toIntent(q, 'in.org.npci.upiapp'),
   },
 ];
 
@@ -118,7 +123,7 @@ export default function PaymentModal({
 
   return (
     <div
-      className="fixed inset-0 flex items-end sm:items-center justify-center p-3 sm:p-4"
+      className="fixed inset-0 flex items-center justify-center p-3 sm:p-4"
       style={{ zIndex: 9999, background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(10px)' }}
     >
       <div
@@ -230,7 +235,7 @@ export default function PaymentModal({
             {/* Pay with any UPI app */}
             <div className="px-5 pb-2">
               <a
-                href={data.qrString}
+                href={`intent://pay?${data.qrString.replace(/^upi:\/\/pay\?/, '')}#Intent;scheme=upi;end`}
                 className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-[13px] font-black text-white mb-2"
                 style={{
                   background: 'linear-gradient(90deg,#1a1a2e,#16213e)',
@@ -238,9 +243,9 @@ export default function PaymentModal({
                   boxShadow: '0 4px 16px -4px rgba(99,102,241,0.3)',
                 }}
               >
-                <svg width="18" height="18" viewBox="0 0 48 48" fill="none">
-                  <rect width="48" height="48" rx="10" fill="#white"/>
-                  <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="11" fill="white" fontWeight="bold" fontFamily="sans-serif">UPI</text>
+                <svg width="18" height="18" viewBox="0 0 48 48">
+                  <rect width="48" height="48" rx="10" fill="#5c6bc0"/>
+                  <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="13" fill="white" fontWeight="bold" fontFamily="sans-serif">UPI</text>
                 </svg>
                 Pay with Any UPI App
               </a>

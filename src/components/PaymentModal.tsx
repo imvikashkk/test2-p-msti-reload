@@ -118,8 +118,8 @@ export default function PaymentModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4"
-      style={{ background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(10px)' }}
+      className="fixed inset-0 flex items-end sm:items-center justify-center p-3 sm:p-4"
+      style={{ zIndex: 9999, background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(10px)' }}
     >
       <div
         className="w-full max-w-sm rounded-2xl overflow-hidden"
@@ -225,6 +225,25 @@ export default function PaymentModal({
                   </span>
                 </a>
               ))}
+            </div>
+
+            {/* Pay with any UPI app */}
+            <div className="px-5 pb-2">
+              <a
+                href={data.qrString}
+                className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-[13px] font-black text-white mb-2"
+                style={{
+                  background: 'linear-gradient(90deg,#1a1a2e,#16213e)',
+                  border: '1px solid rgba(99,102,241,0.4)',
+                  boxShadow: '0 4px 16px -4px rgba(99,102,241,0.3)',
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 48 48" fill="none">
+                  <rect width="48" height="48" rx="10" fill="#white"/>
+                  <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fontSize="11" fill="white" fontWeight="bold" fontFamily="sans-serif">UPI</text>
+                </svg>
+                Pay with Any UPI App
+              </a>
             </div>
 
             {/* Open payment page */}

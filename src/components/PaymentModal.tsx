@@ -183,19 +183,28 @@ export default function PaymentModal({
           <>
             {/* QR Code */}
             <div className="flex flex-col items-center px-5 pt-5 pb-3 gap-3">
-              <div className="rounded-xl overflow-hidden p-2.5 bg-white shadow-lg">
-                <img
-                  src={data.qrCode}
-                  alt="UPI QR Code"
-                  width={176}
-                  height={176}
-                  className="block"
-                  style={{ imageRendering: 'pixelated' }}
-                />
-              </div>
-              <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                Kisi bhi UPI app se scan karo
-              </p>
+              {data.qrCode ? (
+                <>
+                  <div className="rounded-xl overflow-hidden p-2.5 bg-white shadow-lg">
+                    <img
+                      src={data.qrCode}
+                      alt="UPI QR Code"
+                      width={176}
+                      height={176}
+                      className="block"
+                      style={{ imageRendering: 'pixelated' }}
+                    />
+                  </div>
+                  <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                    Kisi bhi UPI app se scan karo
+                  </p>
+                </>
+              ) : (
+                <div className="w-full py-4 text-center rounded-xl"
+                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.1)' }}>
+                  <p className="text-[12px]" style={{ color: 'rgba(255,255,255,0.35)' }}>QR nahi mila — neeche se app se pay karo</p>
+                </div>
+              )}
               <span
                 className="text-[11px] font-mono font-bold px-3 py-1 rounded-full"
                 style={{

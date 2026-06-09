@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         customerEmail: `${user.mobile}@mastireload.com`,
         customerPhone: user.mobile,
         customerName: `User${userId}`,
-        paymentMethod: 'UPI',
+        paymentMethod: 'upi',
         callbackUrl: `${appUrl}/api/payment/callback`,
         metadata: {
           orderId: txnId,
@@ -62,10 +62,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate QR image if GlobalPayin doesn't return one (uses same qrserver.com they use)
-    const qrTarget = qrString ?? intentUrl;
-    const qrCode   = gpData.data?.qrCode ??
-      `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrTarget)}&size=300x300&margin=10`;
+    // Generate QR only from UPI string — intentUrl is a web page, not a UPI QR
+    const qrCode = gpData.data?.qrCode ??
+      (qrString
+        ? `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrString)}&size=300x300&margin=10`
+        : null);
 
     await pool.query(
       `INSERT INTO payments (user_id, plan_id, txn_id, amount, status) VALUES ($1,$2,$3,$4,'pending')`,

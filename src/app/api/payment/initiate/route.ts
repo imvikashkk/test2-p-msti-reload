@@ -53,6 +53,7 @@ export async function POST(req: NextRequest) {
     console.log('GlobalPayin response:', gpData);
 
     const intentUrl = gpData.intentUrl ?? gpData.data?.intentUrl ?? gpData.data?.providerPaymentUrl;
+    const qrString  = gpData.data?.qrString ?? null;
 
     if (!intentUrl) {
       return NextResponse.json(
@@ -60,6 +61,11 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
+
+    // Generate QR image if GlobalPayin doesn't return one (uses same qrserver.com they use)
+    const qrTarget = qrString ?? intentUrl;
+    const qrCode   = gpData.data?.qrCode ??
+      `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrTarget)}&size=300x300&margin=10`;
 
     await pool.query(
       `INSERT INTO payments (user_id, plan_id, txn_id, amount, status) VALUES ($1,$2,$3,$4,'pending')`,
@@ -71,6 +77,9 @@ export async function POST(req: NextRequest) {
       data: {
         txnId,
         paymentUrl: intentUrl,
+        qrCode,
+        qrString:  qrString ?? intentUrl,
+        amount:    plan.price,
       },
     });
   } catch (err) {

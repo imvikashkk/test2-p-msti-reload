@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PaymentModal, { type PaymentData } from './PaymentModal';
 
 // UI metadata mapped by plan index (order from API: cheapest first)
 const UI_META = [
@@ -63,6 +64,7 @@ export default function SubscriptionsPage() {
   const [paying, setPaying] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [error, setError] = useState('');
+  const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
   const router = useRouter();
   const sel = plans.find((p) => p.id === selected) ?? null;
 
@@ -142,7 +144,12 @@ export default function SubscriptionsPage() {
       });
       const data = await res.json();
       if (data.success) {
-        window.location.href = data.data.paymentUrl;
+        if (data.data.qrCode) {
+          setPaymentData(data.data);
+          setPaying(false);
+        } else {
+          window.location.href = data.data.paymentUrl;
+        }
       } else {
         setError(data.message ?? 'Payment failed. Try again.');
         setPaying(false);
@@ -155,6 +162,9 @@ export default function SubscriptionsPage() {
 
   return (
     <main className="relative h-[100dvh] overflow-x-hidden pb-20 text-white">
+      {paymentData && (
+        <PaymentModal data={paymentData} onClose={() => setPaymentData(null)} />
+      )}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700;900&display=swap');
         .pcard {

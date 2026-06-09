@@ -79,8 +79,9 @@ export async function POST(req: NextRequest) {
         txnId,
         paymentUrl: intentUrl,
         qrCode,
-        qrString:  qrString ?? intentUrl,
+        qrString:  qrString ?? null,
         amount:    plan.price,
+        expiresAt: gpData.data?.expiresAt ?? null,
       },
     });
   } catch (err) {

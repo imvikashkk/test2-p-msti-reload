@@ -144,7 +144,7 @@ export default function SubscriptionsPage() {
       });
       const data = await res.json();
       if (data.success) {
-        if (data.data.qrCode) {
+        if (data.data.paymentUrl) {
           setPaymentData(data.data);
           setPaying(false);
         } else {
@@ -163,7 +163,7 @@ export default function SubscriptionsPage() {
   return (
     <main className="relative h-[100dvh] overflow-x-hidden pb-20 text-white">
       {paymentData && (
-        <PaymentModal data={paymentData} onClose={() => setPaymentData(null)} />
+        <PaymentModal data={paymentData} onCloseAction={() => setPaymentData(null)} />
       )}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700;900&display=swap');

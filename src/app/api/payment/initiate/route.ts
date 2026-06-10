@@ -52,8 +52,10 @@ export async function POST(req: NextRequest) {
     const gpData = await gpRes.json();
     console.log('GlobalPayin response:', gpData);
 
-    const intentUrl = gpData.intentUrl ?? gpData.data?.intentUrl ?? gpData.data?.providerPaymentUrl;
-    const qrString  = gpData.data?.qrString ?? null;
+    const intentUrl  = gpData.intentUrl ?? gpData.data?.intentUrl ?? gpData.data?.providerPaymentUrl;
+    const qrString   = gpData.data?.qrString ?? null;
+    // Store the human-readable transactionId — used for GET /payments/intents/:transactionId status check
+    const gpIntentId = gpData.data?.transactionId ?? gpData.transactionId ?? null;
 
     if (!intentUrl) {
       return NextResponse.json(
@@ -69,8 +71,8 @@ export async function POST(req: NextRequest) {
         : null);
 
     await pool.query(
-      `INSERT INTO payments (user_id, plan_id, txn_id, amount, status) VALUES ($1,$2,$3,$4,'pending')`,
-      [userId, planId, txnId, plan.price],
+      `INSERT INTO payments (user_id, plan_id, txn_id, amount, status, gp_intent_id) VALUES ($1,$2,$3,$4,'pending',$5)`,
+      [userId, planId, txnId, plan.price, gpIntentId],
     );
 
     return NextResponse.json({
